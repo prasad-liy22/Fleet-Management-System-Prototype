@@ -1,0 +1,12 @@
+@layer theme, base, mui, components, utilities;
+@import "tailwindcss";
+body { margin: 0; }
+.workspace { min-height: 100vh; display: flex; }
+.sidebar { width: 256px; flex-shrink: 0; background: #102b36; color: #fff; padding: 32px 24px; display: flex; flex-direction: column; }
+.brand-mark { width: 40px; height: 40px; background: #8ee0cb; color: #102b36; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: 24px; margin-bottom: 16px; }
+.sidebar-caption { font-size: 9px; letter-spacing: 1.3px; color: #9eb7c0; margin: 8px 0 40px; }
+.sidebar nav a { display: block; color: #fff; text-decoration: none; padding: 14px; border-radius: 8px; background: #244550; font-size: 14px; }
+.sidebar-footer { margin-top: auto; padding-top: 48px; color: #9eb7c0; line-height: 1.8; font-size: 13px; }
+.workspace-main { flex: 1; min-width: 0; }
+.topbar { min-height: 76px; padding: 16px 32px; background: white; border-bottom: 1px solid #e1e8eb; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+@media(max-width: 800px) { .workspace { flex-direction: column; } .sidebar { width: auto; padding: 18px; } .sidebar-caption, .sidebar-footer, .brand-mark { display: none; } .sidebar nav { margin-top: 14px; } .topbar { padding: 14px 18px; } }

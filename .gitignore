@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/coverage/
+.env
+.env.*
+!.env.example
+**/appsettings.Local.json
+.vs/
+.tools/
+TestResults/
