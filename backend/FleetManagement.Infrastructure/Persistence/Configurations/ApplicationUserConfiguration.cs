@@ -8,6 +8,7 @@ public sealed class ApplicationUserConfiguration : IEntityTypeConfiguration<Appl
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> b)
     {
+        b.ToTable("AspNetUsers", t => t.HasCheckConstraint("CK_Users_TokenVersion", "\"TokenVersion\" >= 0"));
         b.Property(x => x.DisplayName).HasMaxLength(160).IsRequired();
         b.HasIndex(x => x.NormalizedEmail).HasDatabaseName("EmailIndex").IsUnique();
     }

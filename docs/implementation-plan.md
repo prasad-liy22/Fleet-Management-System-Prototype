@@ -2,7 +2,7 @@
 
 1. Foundation (implemented): project boundaries, API bootstrap, responsive web shell and smoke tests.
 2. Persistence (implemented; results in verification.md): entities, PostgreSQL/EF Core, constraints, migrations and development seeds.
-3. Access: Identity, JWT, reset, active users, profiles and server policies.
+3. Access (implemented and verified): Identity, JWT, reset, active users, profiles and server policies.
 4. Master data: vehicles, drivers, customers, audited soft deletion.
 5. Orders: draft editing, validated CRUD, search/filter/pagination.
 6. Dispatch: transactional assignment, state machine and concurrent assignment tests.
@@ -15,4 +15,4 @@
 
 After each phase, build both applications and run relevant tests. Record environmental blockers explicitly. Do not represent planned features as implemented. PostgreSQL-backed concurrency tests are required before dispatch is considered complete.
 
-Phase 2 defers account/role seeds, login, authorization and HTTP actor resolution to Phase 3. No business workflows or frontend features were added.
+Phase 3 is complete: Identity/JWT, role policies, user administration, driver linking, private development reset delivery, audit identity and authentication UI. Phase 4 has not started. Full results are in verification.md.

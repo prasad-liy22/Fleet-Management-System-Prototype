@@ -1,15 +1,19 @@
 # Architecture
 
-Status: Phase 2 persistence implemented. This document distinguishes planned behavior from implemented behavior.
+Status: Phases 1–3 implemented and verified. Operational business modules remain planned.
 
-Three runtime tiers: React web client, ASP.NET Core 8 REST API, PostgreSQL. The backend is a modular monolith. Domain contains entities and lifecycle rules; Application contains use cases, DTOs and integration contracts; Infrastructure implements EF Core, Identity, Azure Blob Storage and SendGrid; Api provides composition, authentication, authorization and HTTP endpoints. Dependency direction: Application -> Domain; Infrastructure -> Application; Api -> Application and Infrastructure.
+Three runtime tiers: React client, ASP.NET Core 8 REST API and PostgreSQL. The backend is a modular monolith. Domain contains framework-independent entities; Application contains DTOs, contracts and role/policy vocabulary; Infrastructure implements EF Core and Identity services; Api composes HTTP endpoints, error handling, authentication and trusted audit identity.
 
-Frontend modules: auth, fleet, customers, orders, trips, driver workflow, maintenance, schedules, notifications, dashboards and reports. Shared API client, layouts and form/table components support these modules. Business decisions remain in API use cases. Protected browser routes improve navigation; they never grant authority.
+Dependencies remain Application -> Domain; Infrastructure -> Application; Api -> Application and Infrastructure. The existing ApplicationUser remains in Infrastructure; Driver remains a separate Domain entity with an optional unique user ID.
 
-Security plan: Identity password hashing; short-lived JWTs; server-side role policies and driver ownership checks; active-user checks on authenticated requests; strict CORS origins; secrets from environment/configuration providers. Define token revocation and password-reset behavior in Phase 3. No business endpoints are exposed in Phase 1.
+Phase 3 adds Identity password hashing/lockout/reset, 15-minute JWT access tokens, current-user validation, server-side role policies and administrator account operations. Tokens are checked against active status, current role and a revocation version on every request. A single-role unique membership index and TokenVersion are added by a new migration; InitialPersistence is unchanged.
 
-Transactions will persist trip/resource changes and notification outbox records together. EF concurrency tokens and database uniqueness constraints protect assignment; conflicts return HTTP 409. Email is delivered asynchronously from the durable outbox with bounded retry. Cloud file access remains private and authorized by API.
+Transactions and a shared advisory lock protect account/role/link changes and the last active administrator. Identity security stamps protect reset links. Reset delivery has a Development-only private file adapter; no production file fallback or SendGrid integration exists. See authentication.md for complete security decisions.
 
-Assumptions: one trip per order in the initial scope; no split loads or reassignments. Assignment reserves resources immediately, regardless of required date. Date-only schedules use UTC calendar dates; event timestamps use UTC instants. Owner access is read-only. No GPS, billing, fuel or inventory features.
+The frontend uses a lightweight AuthProvider with tab-scoped sessionStorage, identity verification on reload, protected routes and role navigation. Five distinct landing shells display planned modules without business metrics. Administrator user management is implemented; operational pages remain deferred.
 
-Phase 2 adds EF Core/Npgsql, Identity tables (without login), audit contracts, explicit migrations and Development-only seeding. PostgreSQL xmin and active-trip unique indexes prepare concurrency; assignment transactions remain Phase 6. Required historical navigations to filtered master data need deliberate IgnoreQueryFilters queries; see database-design.md.
+Persistence retains automatic UTC auditing, master-data soft deletion, restrictive history relationships and xmin concurrency tokens. HTTP writes use the validated subject as audit actor; unauthenticated/system work uses a named system actor. Required historical navigations to filtered master data require deliberate IgnoreQueryFilters queries.
+
+Future assignment must transact trip/resource/outbox changes together. xmin and active-trip uniqueness already prepare conflict protection; Phase 6 still implements the workflow. SendGrid and Azure Blob adapters, operational dashboards and reports remain later phases.
+
+Assumptions: one trip per order; immediate resource reservation on assignment; whole-kilometre odometers; kilogram capacities; calendar dates interpreted consistently in UTC; owner access read-only. No GPS, billing, fuel, inventory, AI or other out-of-scope features.

@@ -1,9 +1,23 @@
 # API overview
 
-Implemented: GET /health returns plain-text Healthy when the API process responds. This is liveness only, not database or integration readiness.
+Implemented through Phase 3. All responses containing account data use DTOs. EF entities, password hashes and Identity security stamps are never returned.
 
-Planned resource groups: /api/auth, /api/users, /api/vehicles, /api/drivers, /api/customers, /api/orders, /api/trips, /api/maintenance, /api/service-types, /api/service-schedules, /api/notifications, /api/reports and /api/dashboard.
+| Method | Route | Access |
+| --- | --- | --- |
+| GET | /health | Anonymous process liveness |
+| POST | /api/auth/login | Anonymous, rate limited |
+| POST | /api/auth/forgot-password | Anonymous, rate limited |
+| POST | /api/auth/reset-password | Anonymous, rate limited |
+| GET | /api/auth/me | Authenticated |
+| POST | /api/auth/logout | Authenticated |
+| GET | /api/users | FleetAdministrator; page/pageSize/search/role/isActive filters |
+| GET | /api/users/{id} | FleetAdministrator |
+| POST | /api/users | FleetAdministrator |
+| PUT | /api/users/{id} | FleetAdministrator; optimistic public version required |
+| GET | /api/users/driver-options | FleetAdministrator; optional userId/search, maximum 100 |
 
-Controllers accept request DTOs and return response DTOs; EF entities never cross the HTTP boundary. Paginated lists return items, page, pageSize and totalCount. Page size is capped by the server. Use 201 for creation, 204 for successful actions without bodies, 400 for validation, 401 for missing/invalid authentication, 403 for forbidden roles, 404 for unavailable resources and 409 for lifecycle/concurrency conflicts. Errors use Problem Details with validation errors where relevant.
+There is no public registration or physical account-delete endpoint. User updates include active status, role and driver link. Creation returns 201 with Location; logout returns 204; validation/authentication/authorization/missing/conflict errors use 400/401/403/404/409. Throttling returns 429. Unconfigured production reset delivery returns a uniform 503. Errors use Problem Details; paginated users return items/page/pageSize/totalCount.
 
-Role mapping: administrator manages users/master records/service types; coordinator manages orders and trip assignment/cancellation/completion; driver reads and operates their own assigned trips; mechanic manages maintenance/schedules and reviews notes; owner reads fleet summaries and reports. Apply object ownership and active-account checks in addition to role policies.
+See authentication.md for request/response contracts, role policies, driver-link rules, session revocation and reset delivery. Health remains independent of database connectivity but the host requires valid security configuration.
+
+Future resource groups remain /api/vehicles, /api/drivers, /api/customers, /api/orders, /api/trips, /api/maintenance, /api/service-types, /api/service-schedules, /api/notifications, /api/reports and /api/dashboard. None are implemented as fake business endpoints. Authorization probes exist only in the test assembly.

@@ -298,7 +298,10 @@ public sealed class PersistenceTests(PostgreSqlFixture fixture) : IClassFixture<
     public async Task Migration_is_applied_and_generated_script_is_idempotent()
     {
         await using var db = fixture.CreateContext();
-        Assert.Single(await db.Database.GetAppliedMigrationsAsync());
+        var applied = (await db.Database.GetAppliedMigrationsAsync()).ToArray();
+        Assert.Equal(2, applied.Length);
+        Assert.Contains("20260922174736_InitialPersistence", applied);
+        Assert.Contains(applied, migration => migration.EndsWith("_AuthenticationVersionAndSingleRole"));
         Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         var script = db.GetService<IMigrator>().GenerateScript(options: MigrationsSqlGenerationOptions.Idempotent);
         await using var connection = new NpgsqlConnection(fixture.ConnectionString);

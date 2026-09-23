@@ -10,3 +10,12 @@ body { margin: 0; }
 .workspace-main { flex: 1; min-width: 0; }
 .topbar { min-height: 76px; padding: 16px 32px; background: white; border-bottom: 1px solid #e1e8eb; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 @media(max-width: 800px) { .workspace { flex-direction: column; } .sidebar { width: auto; padding: 18px; } .sidebar-caption, .sidebar-footer, .brand-mark { display: none; } .sidebar nav { margin-top: 14px; } .topbar { padding: 14px 18px; } }
+
+.auth-screen { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: linear-gradient(130deg, #102b36 0%, #174c57 44%, #e8f2ef 44%); }
+.auth-card { width: 100%; max-width: 460px; padding: 40px; }
+.sidebar nav { display: grid; gap: 8px; }
+.sidebar nav a:not(.active) { background: transparent; }
+.sidebar nav a.active { background: #244550; }
+.planned-nav { padding: 12px 14px; color: #a8bec5; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 14px; }
+.planned-nav span { font-size: 10px; border: 1px solid #48616a; padding: 2px 5px; border-radius: 5px; }
+@media(max-width: 800px) { .auth-card { padding: 28px 22px; } .sidebar nav { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

@@ -1,6 +1,6 @@
 # Business rules
 
-Planned implementation; Phase 1 provides project scaffolding only.
+The operational rules below remain planned; persistence and authentication safeguards are implemented through Phase 3.
 
 Trip transitions:
 

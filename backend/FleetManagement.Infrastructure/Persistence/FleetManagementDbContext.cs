@@ -39,6 +39,7 @@ public sealed class FleetManagementDbContext : IdentityDbContext<ApplicationUser
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        builder.Entity<IdentityUserRole<Guid>>().HasIndex(x => x.UserId).IsUnique();
         builder.ApplyConfigurationsFromAssembly(typeof(FleetManagementDbContext).Assembly);
         foreach (var entityType in builder.Model.GetEntityTypes()
                      .Where(x => typeof(IAuditable).IsAssignableFrom(x.ClrType)))

@@ -1,6 +1,6 @@
-# Database design — Phase 2
+# Database design — Phases 2–3
 
-EF Core 8 and Npgsql persist to PostgreSQL. Entities live in Domain; Identity-specific ApplicationUser lives in Infrastructure. No authentication or business workflow is implemented here.
+EF Core 8 and Npgsql persist to PostgreSQL. Entities live in Domain; Identity-specific ApplicationUser lives in Infrastructure. Authentication is implemented in Phase 3; operational workflows remain deferred.
 
 ## Entities and relationships
 
@@ -18,7 +18,7 @@ EF Core 8 and Npgsql persist to PostgreSQL. Entities live in Domain; Identity-sp
 | ServiceSchedule | Required vehicle/type; independent nullable due date/odometer; completion time and optional log |
 | Notification | Email snapshot, optional user, subject/body, related record, sent time/flag, retry metadata |
 
-Identity tables use GUID keys, unique normalized usernames and unique non-null normalized emails. The five role names are declared in Application; creation and single-role enforcement are deferred to Phase 3. Business foreign keys use RESTRICT. Identity's internal claim/role/token relationships retain standard defaults. Audit actor strings and notification polymorphic references do not have cascading foreign keys.
+Identity tables use GUID keys, unique normalized usernames and unique non-null normalized emails. The five role names are declared in Application and seeded idempotently. A unique AspNetUserRoles.UserId index enforces at most one membership; Identity services assign exactly one supported role. Business foreign keys use RESTRICT. Identity's internal claim/role/token relationships retain standard defaults. Audit actor strings and notification polymorphic references do not have cascading foreign keys.
 
 ## Constraints
 
@@ -40,7 +40,7 @@ Required navigations to filtered master data can omit historical rows in Include
 
 ## Auditing
 
-All eleven entities implement IAuditable. Sync/async SaveChanges set trusted CreatedBy/CreatedAt on insert and UpdatedBy/UpdatedAt on every write. Creation metadata is immutable in storage. Injectable TimeProvider supplies UTC timestamps. IAuditActor currently identifies system; Phase 3 adds authenticated user resolution. Never accept audit identity from DTOs.
+All eleven entities implement IAuditable. Sync/async SaveChanges set trusted CreatedBy/CreatedAt on insert and UpdatedBy/UpdatedAt on every write. Creation metadata is immutable in storage. Injectable TimeProvider supplies UTC timestamps. IAuditActor uses the validated HTTP subject for authenticated operations, otherwise system. Never accept audit identity from DTOs.
 
 Events use UTC DateTimeOffset/timestamp with time zone. Calendar dates use DateOnly/date. Seed IDs/business dates are fixed; audit times record actual execution.
 
@@ -52,8 +52,15 @@ Vehicle, Driver, Order and Trip use uint Version mapped by IsRowVersion to Postg
 
 Development plus explicit --seed-only or Seed:Enabled=true is required, with migrations already applied. Seeding uses a transaction and advisory lock, inserts missing fixed IDs, preserves edits/deletion state and never creates production data.
 
-Fixtures: 3 vehicles, 2 drivers, 2 companies, 3 service types, 3 orders, 3 trips (draft/assigned/completed), 1 note, 2 maintenance logs and 4 schedules (completed/date-only/odometer-only/both). All names, identifiers and contacts are fictional; emails use reserved example domains. No accounts, roles, passwords, notifications or real cloud files are seeded.
+Fixtures: 3 vehicles, 2 drivers, 2 companies, 3 service types, 3 orders, 3 trips (draft/assigned/completed), 1 note, 2 maintenance logs and 4 schedules (completed/date-only/odometer-only/both). All names, identifiers and contacts are fictional; emails use reserved example domains. The fleet fixture seeder creates no accounts or notifications. The separate Phase 3 IdentitySeeder adds five roles and five Development-only accounts using a private configured password; no real cloud files are seeded.
 
 ## Verification strategy
 
 Real PostgreSQL tests apply migrations, check constraints, soft deletion, auditing, xmin, seeding and an idempotent migration script. No InMemory/SQLite substitute is used. FMS_TEST_POSTGRES needs CREATE DATABASE: tests create/drop only a random fms_test_* database. Without it relational tests are explicitly skipped. See README commands and verification.md results.
+
+
+## Phase 3 migration
+
+20260923150723_AuthenticationVersionAndSingleRole adds a nonnegative TokenVersion integer to AspNetUsers and the unique single-role membership index. Existing Identity tables and the initial migration are preserved. Account updates/logout/password reset increment TokenVersion to revoke existing JWTs. Driver linking uses the existing unique nullable ApplicationUserId foreign key. Account mutation transactions and an advisory lock protect the last active administrator and concurrent linking.
+
+Identity update concurrency stamps remain internal. Administrator DTOs expose a public version counter for stale-form detection. New account/update responses re-read persisted records to match PostgreSQL timestamp precision.
