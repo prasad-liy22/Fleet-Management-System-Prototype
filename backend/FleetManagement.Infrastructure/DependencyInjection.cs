@@ -22,6 +22,9 @@ public static class DependencyInjection
             options.UseNpgsql(connection);
         });
         services.AddScoped<DevelopmentSeeder>();
+        services.AddScoped<FleetManagement.Application.MasterData.IVehicleService, FleetManagement.Infrastructure.MasterData.VehicleService>();
+        services.AddScoped<FleetManagement.Application.MasterData.IDriverService, FleetManagement.Infrastructure.MasterData.DriverService>();
+        services.AddScoped<FleetManagement.Application.MasterData.ICustomerService, FleetManagement.Infrastructure.MasterData.CustomerService>();
         return services;
     }
 }

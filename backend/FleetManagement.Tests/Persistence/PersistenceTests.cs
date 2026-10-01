@@ -299,9 +299,10 @@ public sealed class PersistenceTests(PostgreSqlFixture fixture) : IClassFixture<
     {
         await using var db = fixture.CreateContext();
         var applied = (await db.Database.GetAppliedMigrationsAsync()).ToArray();
-        Assert.Equal(2, applied.Length);
+        Assert.Equal(3, applied.Length);
         Assert.Contains("20260922174736_InitialPersistence", applied);
         Assert.Contains(applied, migration => migration.EndsWith("_AuthenticationVersionAndSingleRole"));
+        Assert.Contains(applied, migration => migration.EndsWith("_CustomerConcurrency"));
         Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         var script = db.GetService<IMigrator>().GenerateScript(options: MigrationsSqlGenerationOptions.Idempotent);
         await using var connection = new NpgsqlConnection(fixture.ConnectionString);

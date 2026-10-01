@@ -1,6 +1,6 @@
 # API overview
 
-Implemented through Phase 3. All responses containing account data use DTOs. EF entities, password hashes and Identity security stamps are never returned.
+Implemented through Phase 4. All responses containing account data use DTOs. EF entities, password hashes and Identity security stamps are never returned.
 
 | Method | Route | Access |
 | --- | --- | --- |
@@ -20,4 +20,6 @@ There is no public registration or physical account-delete endpoint. User update
 
 See authentication.md for request/response contracts, role policies, driver-link rules, session revocation and reset delivery. Health remains independent of database connectivity but the host requires valid security configuration.
 
-Future resource groups remain /api/vehicles, /api/drivers, /api/customers, /api/orders, /api/trips, /api/maintenance, /api/service-types, /api/service-schedules, /api/notifications, /api/reports and /api/dashboard. None are implemented as fake business endpoints. Authorization probes exist only in the test assembly.
+Fleet master data groups /api/vehicles, /api/drivers and /api/customers provide administrator-only list/detail/create/update/deactivate/reactivate operations. See master-data.md for DTO fields, version requirements and filters.
+
+Future resource groups remain /api/orders, /api/trips, /api/maintenance, /api/service-types, /api/service-schedules, /api/notifications, /api/reports and /api/dashboard. None are implemented as fake business endpoints. Authorization probes exist only in the test assembly.

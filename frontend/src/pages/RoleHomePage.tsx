@@ -18,10 +18,10 @@ export function RoleHomePage() {
     </Paper>
     <Typography variant="h6" sx={{ mb: 2 }}>Your workspace</Typography>
     <Box className="grid grid-cols-1 gap-4 md:grid-cols-2">
-      {config.navigation.filter(item => !item.path).map(item => <Paper key={item.label} variant="outlined" sx={{ p: 3 }}>
+      {config.navigation.filter(item => item.path !== '/').map(item => <Paper key={item.label} variant="outlined" sx={{ p: 3 }}>
         <Typography variant="h6">{item.label}</Typography>
-        <Typography color="text.secondary" sx={{ mt: 1, mb: 2 }}>This module is scheduled for a later implementation phase.</Typography>
-        <Chip label="Planned" size="small" variant="outlined" />
+        <Typography color="text.secondary" sx={{ mt: 1, mb: 2 }}>{item.path ? `Open ${item.label.toLowerCase()} management.` : 'This module is scheduled for a later implementation phase.'}</Typography>
+        <>{item.path ? <Button component={Link} to={item.path}>Open {item.label}</Button> : <Chip label="Planned" size="small" variant="outlined" />}</>
       </Paper>)}
     </Box>
     <Typography variant="body2" color="text.secondary" sx={{ mt: 3 }}>Signed in as {user.email}</Typography>

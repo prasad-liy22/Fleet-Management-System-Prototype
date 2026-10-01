@@ -9,6 +9,7 @@ public sealed class CustomerCompanyConfiguration : IEntityTypeConfiguration<Cust
     public void Configure(EntityTypeBuilder<CustomerCompany> b)
     {
         b.ToTable("CustomerCompanies");
+        b.Property(x => x.Version).IsRowVersion();
         b.Property(x => x.CompanyName).HasMaxLength(200).IsRequired();
         b.Property(x => x.ContactPerson).HasMaxLength(160).IsRequired();
         b.Property(x => x.Telephone).HasMaxLength(40).IsRequired();

@@ -3,6 +3,7 @@ using System;
 using FleetManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FleetManagement.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FleetManagementDbContext))]
-    partial class FleetManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261001172250_CustomerConcurrency")]
+    partial class CustomerConcurrency
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

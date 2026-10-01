@@ -64,3 +64,6 @@ Real PostgreSQL tests apply migrations, check constraints, soft deletion, auditi
 20260923150723_AuthenticationVersionAndSingleRole adds a nonnegative TokenVersion integer to AspNetUsers and the unique single-role membership index. Existing Identity tables and the initial migration are preserved. Account updates/logout/password reset increment TokenVersion to revoke existing JWTs. Driver linking uses the existing unique nullable ApplicationUserId foreign key. Account mutation transactions and an advisory lock protect the last active administrator and concurrent linking.
 
 Identity update concurrency stamps remain internal. Administrator DTOs expose a public version counter for stale-form detection. New account/update responses re-read persisted records to match PostgreSQL timestamp precision.
+## Phase 4 customer concurrency
+
+CustomerCompany now maps Version to PostgreSQL xmin through 20261001172250_CustomerConcurrency. Vehicles/drivers keep their existing mappings. Previous migrations and all uniqueness/history/query-filter behavior are preserved. See master-data.md for API version and activation contracts.

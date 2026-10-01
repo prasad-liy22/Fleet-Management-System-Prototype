@@ -21,3 +21,7 @@ Start odometer must be at least current vehicle odometer. End odometer must be a
 A service is overdue if the due date has passed OR the current vehicle odometer has reached its threshold, while the schedule is incomplete. Upcoming-service horizon is configurable. Logging maintenance records and completing the relevant schedule occur in one transaction. Next service thresholds create a new schedule. Mechanic review records reviewer and UTC time on each attention note.
 
 No real personal or operational data will be seeded. Development seeding must be explicitly enabled; account passwords come from configuration and demo login instructions will be documented when seeding exists.
+
+## Phase 4 master management
+
+FleetAdministrator exclusively manages vehicles, drivers and customer companies. Backend rules cover validation, monotonic odometers, trip-controlled status, active-trip edit/deactivation guards, preserved account links, unfinished-order customer safeguards and xmin conflicts. See master-data.md for the complete rules and assumptions. No order/trip/maintenance workflow is added.

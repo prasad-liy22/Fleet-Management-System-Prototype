@@ -5,7 +5,7 @@ interface RoleConfig { label: string; color: string; introduction: string; navig
 export const roleConfig: Record<Role, RoleConfig> = {
   FleetAdministrator: {
     label: 'Fleet Administrator', color: '#126b69', introduction: 'Manage access and prepare your fleet records.',
-    navigation: [{ label: 'Dashboard', path: '/' }, { label: 'Users', path: '/users' }, { label: 'Vehicles' }, { label: 'Drivers' }, { label: 'Customers' }],
+    navigation: [{ label: 'Dashboard', path: '/' }, { label: 'Users', path: '/users' }, { label: 'Vehicles', path: '/vehicles' }, { label: 'Drivers', path: '/drivers' }, { label: 'Customers', path: '/customers' }],
   },
   OperationsCoordinator: {
     label: 'Operations Coordinator', color: '#285fa6', introduction: 'Your workspace for coordinating transport operations.',

@@ -1,6 +1,6 @@
 # Architecture
 
-Status: Phases 1–3 implemented and verified. Operational business modules remain planned.
+Status: Phases 1–4 implemented. Fleet master data management is available; order/trip/maintenance workflows remain planned.
 
 Three runtime tiers: React client, ASP.NET Core 8 REST API and PostgreSQL. The backend is a modular monolith. Domain contains framework-independent entities; Application contains DTOs, contracts and role/policy vocabulary; Infrastructure implements EF Core and Identity services; Api composes HTTP endpoints, error handling, authentication and trusted audit identity.
 
@@ -10,10 +10,12 @@ Phase 3 adds Identity password hashing/lockout/reset, 15-minute JWT access token
 
 Transactions and a shared advisory lock protect account/role/link changes and the last active administrator. Identity security stamps protect reset links. Reset delivery has a Development-only private file adapter; no production file fallback or SendGrid integration exists. See authentication.md for complete security decisions.
 
-The frontend uses a lightweight AuthProvider with tab-scoped sessionStorage, identity verification on reload, protected routes and role navigation. Five distinct landing shells display planned modules without business metrics. Administrator user management is implemented; operational pages remain deferred.
+The frontend uses a lightweight AuthProvider with tab-scoped sessionStorage, identity verification on reload, protected routes and role navigation. Five distinct landing shells display planned modules without business metrics. Administrator user and fleet master-data management are implemented. Shared master list/dialog components serve three lazy-loaded feature pages. Order/trip/maintenance pages remain deferred.
 
 Persistence retains automatic UTC auditing, master-data soft deletion, restrictive history relationships and xmin concurrency tokens. HTTP writes use the validated subject as audit actor; unauthenticated/system work uses a named system actor. Required historical navigations to filtered master data require deliberate IgnoreQueryFilters queries.
 
 Future assignment must transact trip/resource/outbox changes together. xmin and active-trip uniqueness already prepare conflict protection; Phase 6 still implements the workflow. SendGrid and Azure Blob adapters, operational dashboards and reports remain later phases.
 
 Assumptions: one trip per order; immediate resource reservation on assignment; whole-kilometre odometers; kilogram capacities; calendar dates interpreted consistently in UTC; owner access read-only. No GPS, billing, fuel, inventory, AI or other out-of-scope features.
+
+Phase 4 reuses ManageFleet, Problem Details, PageDto, the HTTP audit actor and all existing entities/filters. Separate Infrastructure master-data services implement validation and resource safeguards. Driver changes share the existing account mutation lock. CustomerConcurrency adds the missing customer xmin mapping through a new migration. See master-data.md for assumptions and future transaction responsibilities.

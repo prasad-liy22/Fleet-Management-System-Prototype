@@ -33,6 +33,7 @@ public sealed class ModelTests
     }
 
     [Theory]
+    [InlineData(typeof(CustomerCompany))]
     [InlineData(typeof(Vehicle))]
     [InlineData(typeof(Driver))]
     [InlineData(typeof(Order))]

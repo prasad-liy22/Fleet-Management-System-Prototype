@@ -6,7 +6,7 @@ University industry-based project for heavy-vehicle operations, using React/Type
 
 Phases 1–2 provide the application foundation, EF entities/migrations, auditing, soft deletion, concurrency preparation and fictional fleet fixtures. Phase 3 adds Identity/JWT login, password reset, five-role authorization, account administration, driver linking and authenticated role-specific frontend shells.
 
-Vehicle/driver/customer CRUD, operational workflows, analytics, reports, SendGrid and Azure Blob integration remain future phases. See docs/verification.md for executed checks and docs/authentication.md for security decisions.
+Phase 4 adds PostgreSQL-backed Vehicles, Drivers and Customer Companies management, administrator-only APIs, validated forms, soft deactivation/reactivation, search/pagination and stale-edit protection. Operational workflows, analytics, reports, SendGrid and Azure Blob integration remain future phases. See docs/master-data.md for contracts and business rules. See docs/verification.md for executed checks and docs/authentication.md for security decisions.
 
 ## Prerequisites
 
@@ -80,7 +80,7 @@ dotnet run --project backend/FleetManagement.Api --no-launch-profile -- --seed-o
 dotnet run --project backend/FleetManagement.Api --launch-profile http
 ~~~
 
-Both InitialPersistence and AuthenticationVersionAndSingleRole must be applied. Startup never auto-migrates. --seed-only seeds fictional fleet data, the five roles and development users, then exits. --seed-roles-only initializes roles without demo accounts. Do not enable development fixtures in production.
+All three migrations (InitialPersistence, AuthenticationVersionAndSingleRole and CustomerConcurrency) must be applied. Startup never auto-migrates. --seed-only seeds fictional fleet data, the five roles and development users, then exits. --seed-roles-only initializes roles without demo accounts. Do not enable development fixtures in production.
 
 ## Frontend and demo login
 
@@ -100,7 +100,7 @@ Open http://localhost:5173. The API runs at http://localhost:5080 through the ex
 | Driver | driver@fleet.example |
 | Fleet Owner | owner@fleet.example |
 
-Password: the private Seed__Password used when these accounts were first created. No password is committed. Fleet Administrator can manage accounts from Users.
+Password: the private Seed__Password used when these accounts were first created. No password is committed. Fleet Administrator can manage accounts from Users and fleet records from Vehicles, Drivers and Customers. Account links remain managed through Users.
 
 For a local password reset, request it through Forgot password, open the new JSON file in the configured pickup folder, then open its resetLink. Tokens expire in 30 minutes and are single-use. The pickup folder is never served by the application.
 
@@ -137,3 +137,5 @@ Review generated migrations; never edit already-applied migrations or replace mi
 - docs: architecture, database design, authentication, API overview, rules, phase plan and verification.
 
 Docker Compose and GitHub Actions remain Phase 12 deliverables. Repository: [Fleet Management System Prototype](https://github.com/prasad-liy22/Fleet-Management-System-Prototype).
+
+For opt-in rendered React tests against a running isolated PostgreSQL-backed API, see the Live React/API verification section in docs/master-data.md. The normal frontend suite does not require a running backend.
